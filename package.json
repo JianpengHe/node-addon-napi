@@ -1,0 +1,26 @@
+{
+  "name": "addon-napi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "configure": "node configure.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JianpengHe/node-addon-napi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JianpengHe/node-addon-napi/issues"
+  },
+  "homepage": "https://github.com/JianpengHe/node-addon-napi#readme",
+  "dependencies": {
+    "node-addon-api": "^8.5.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^11.4.2"
+  }
+}

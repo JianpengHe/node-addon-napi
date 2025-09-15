@@ -1,0 +1,8 @@
+/node_modules
+/dist
+*.error.log
+*.tsbuildinfo
+*.map
+*.d.ts
+build
+binding.gyp
