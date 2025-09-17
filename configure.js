@@ -25,7 +25,7 @@ fs.readdir(PATH, { withFileTypes: true }, async (err, files) => {
                 }
             ]
         }, null, 2))
-        const s = child_process.spawn('node-gyp.cmd', ['configure', '--arch=x64'], { cwd: dir, shell: true });
+        const s = child_process.spawn('node-gyp.cmd', ["clean", 'configure', "--release", '--arch=x64', "--msvs_version=2022", "--force-process-config"], { cwd: dir, shell: true });
         s.stdout.pipe(process.stdout)
         s.stderr.pipe(process.stderr)
         await new Promise(r => s.on("close", r))
@@ -38,5 +38,6 @@ ${['Debug|x64', 'Release|x64'].map(item => `  <PropertyGroup Condition="'$(Confi
     <LocalDebuggerCommand>cmd.exe</LocalDebuggerCommand>
   </PropertyGroup>
 `).join("")}</Project>`)
+        await fs.promises.unlink(path.join(dir, "binding.gyp"))
     }
 })
