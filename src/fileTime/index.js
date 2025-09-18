@@ -1,12 +1,14 @@
-const addon = require('./build/Release/fileTime.node');
-const fs = require('fs')
-const now = new Date().getTime()
-const ctime = now - 365 * 24 * 60 * 60 * 1000
-const mtime = now - 30 * 24 * 60 * 60 * 1000
-const atime = now - 7 * 24 * 60 * 60 * 1000
-addon.fileTime(__filename, ctime, mtime, atime)
-const stat = fs.statSync(__filename)
-console.log(stat)
-console.log(new Date(stat.birthtimeMs).toLocaleString())
-console.log(new Date(stat.mtimeMs).toLocaleString())
-console.log(new Date(stat.atimeMs).toLocaleString())
+const addon = require("./build/Release/fileTime.node");
+const fs = require("fs");
+const path = require("path");
+const file = path.resolve(__dirname, "中文 文件.txt");
+const now = new Date().getTime();
+const ctime = now - 365 * 24 * 60 * 60 * 1000;
+const mtime = now - 30 * 24 * 60 * 60 * 1000;
+const atime = now - 7 * 24 * 60 * 60 * 1000;
+addon.fileTime(file, ctime, mtime, atime);
+const stat = fs.statSync(file);
+console.log(stat);
+console.log(new Date(stat.birthtimeMs).toLocaleString());
+console.log(new Date(stat.mtimeMs).toLocaleString());
+console.log(new Date(stat.atimeMs).toLocaleString());
