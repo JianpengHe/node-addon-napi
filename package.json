@@ -21,6 +21,9 @@
     "node-addon-api": "^8.5.0"
   },
   "devDependencies": {
-    "node-gyp": "^12.1.0"
+    "@types/node": "^26.6.5",
+    "node-gyp": "^12.1.0",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2"
   }
 }

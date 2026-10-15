@@ -1,160 +1,121 @@
-
-const { Transform } = require('stream');
-const { pipeline } = require('stream/promises');
-const fs = require('fs');
-// const child_process = require('child_process');
-const addon = require('./zstd.node');
-
-/**
- * Zstd 压缩 Transform。
- *
- * 每个实例只处理一个压缩帧。
- */
-class ZstdCompressTransform extends Transform {
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ZstdDecompress = exports.ZstdCompress = void 0;
+const stream = __importStar(require("stream"));
+const path = __importStar(require("path"));
+const addon = globalThis["require"](path.resolve(__dirname, "zstd.node"));
+class ZstdCompress extends stream.Transform {
+    codec;
+    finishedBytes = 0;
     constructor(compressionLevel = 3, threadCount = 0) {
         super();
-        // 将压缩级别传给 C++，默认使用 3 级压缩。
         this.codec = new addon.ZstdCompressor(compressionLevel, threadCount);
     }
-
     _transform(chunk, encoding, callback) {
         try {
             const output = this.codec.compress(chunk);
-
-            if (output.length > 0) {
+            if (output.length > 0)
                 this.push(output);
-            }
-
             callback();
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
         }
+        this.finishedBytes += chunk.length;
     }
-
     _flush(callback) {
         try {
-            // 结束压缩帧，确保最后的数据和帧尾全部输出。
             const output = this.codec.finish();
-
-            if (output.length > 0) {
+            if (output.length > 0)
                 this.push(output);
-            }
-
             callback();
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
         }
     }
-
     _destroy(err, callback) {
         try {
             this.codec.close();
-        } catch (closeErr) {
+        }
+        catch (closeErr) {
             err ||= closeErr;
         }
-
         callback(err);
     }
 }
-
-/**
- * Zstd 解压 Transform。
- *
- * 支持分块解压，并在输入结束时检查压缩帧是否完整。
- */
-class ZstdDecompressTransform extends Transform {
+exports.ZstdCompress = ZstdCompress;
+class ZstdDecompress extends stream.Transform {
+    codec;
+    finishedBytes = 0;
     constructor() {
         super();
         this.codec = new addon.ZstdDecompressor();
     }
-
     _transform(chunk, encoding, callback) {
         try {
             const output = this.codec.decompress(chunk);
-
-            if (output.length > 0) {
+            if (output.length > 0)
                 this.push(output);
-            }
-
             callback();
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
         }
     }
-
     _flush(callback) {
         try {
-            // 检查是否完整读取并解压了 Zstd 帧。
             const output = this.codec.finish();
-
-            if (output.length > 0) {
+            if (output.length > 0)
                 this.push(output);
-            }
-
             callback();
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
         }
     }
-
     _destroy(err, callback) {
         try {
             this.codec.close();
-        } catch (closeErr) {
+        }
+        catch (closeErr) {
             err ||= closeErr;
         }
-
         callback(err);
     }
 }
-
-/**
- * 将一个文件压缩为 Zstd 格式。
- */
-async function compressFile(inputPath, outputPath) {
-    await pipeline(
-        fs.createReadStream(inputPath),
-        new ZstdCompressTransform(16),
-        fs.createWriteStream(outputPath)
-    );
-    // return new Promise((resolve, reject) => {
-    //     const zstdStream = child_process.spawn("zstd.exe", ["-16", "-vc", "-T0", "--progress", "--no-check"], {
-    //         stdio: ["pipe", "overlapped", "inherit"],
-    //     });
-    //     zstdStream.on('exit', (code) => {
-    //         if (code === 0) {
-    //             resolve();
-    //         } else {
-    //             reject(new Error(`Zstd compression failed with exit code ${code}`));
-    //         }
-    //     });
-
-    //     fs.createReadStream(inputPath).pipe(zstdStream.stdin);
-    //     zstdStream.stdout.pipe(fs.createWriteStream(outputPath));
-    // });
-}
-
-/**
- * 将一个 Zstd 文件解压到目标文件。
- */
-async function decompressFile(inputPath, outputPath) {
-    await pipeline(
-        fs.createReadStream(inputPath),
-        new ZstdDecompressTransform(),
-        fs.createWriteStream(outputPath)
-    );
-
-}
-
-
-async function main() {
-    console.time('1');
-    // await compressFile('node_modules.zip', 'node_modules.zip.zst');
-    // console.log('压缩完成');
-    // await decompressFile('node_modules.zip.zst', 'node_modules-restored.zip');
-    // console.log('解压完成');
-    console.timeEnd('1');
-
-}
-
-main().catch(console.error);
+exports.ZstdDecompress = ZstdDecompress;
+//# sourceMappingURL=index.js.map
