@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "configure": "node configure.js"
+    "configure": "node configure.js",
+    "prepare": "node publish.js"
   },
   "repository": {
     "type": "git",

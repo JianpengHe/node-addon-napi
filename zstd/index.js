@@ -35,8 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZstdDecompress = exports.ZstdCompress = void 0;
 const stream = __importStar(require("stream"));
-const path = __importStar(require("path"));
-const addon = globalThis["require"](path.resolve(__dirname, "zstd.node"));
+const addon = require("../publishNode").require("zstd.node");
 class ZstdCompress extends stream.Transform {
     codec;
     finishedBytes = 0;

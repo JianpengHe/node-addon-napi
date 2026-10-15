@@ -1,7 +1,5 @@
 import * as stream from "stream";
-import * as path from "path";
-
-const addon = globalThis["require"](path.resolve(__dirname, "zstd.node"));
+const addon = require("../publishNode").require("zstd.node");
 
 /**
  * Zstd 压缩 Transform。

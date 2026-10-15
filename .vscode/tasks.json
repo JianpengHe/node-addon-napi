@@ -10,6 +10,13 @@
       ],
       "group": "build",
       "label": "tsc: 监视 - tsconfig.json"
+    },
+    {
+      "type": "npm",
+      "script": "prepare",
+      "problemMatcher": [],
+      "label": "发布node文件到临时目录",
+      "detail": "pnpm run prepare",
     }
   ]
 }
