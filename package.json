@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "configure": "node configure.js",
-    "prepare": "node publish.js"
+    "prepare": "node publish.js",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
