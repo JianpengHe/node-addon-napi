@@ -350,7 +350,7 @@ private:
             return env.Null();
         }
 
-        if (!hasInput || lastRemaining != 0) {
+        if (!hasInput ) {
             Napi::Error::New(env, "Incomplete or empty Zstd frame").ThrowAsJavaScriptException();
             return env.Null();
         }
