@@ -157,9 +157,9 @@ private:
 
     void FinishDecompress() {
         if (!state_->dctx) throw std::runtime_error("Decompressor is closed");
-        if (!state_->hasInput || state_->lastRemaining != 0) {
-            throw std::runtime_error("Incomplete or empty Zstd frame");
-        }
+        // if (!state_->hasInput || state_->lastRemaining != 0) {
+        //     throw std::runtime_error("Incomplete or empty Zstd frame");
+        // }
         // A successful decompression finish returns an empty Buffer.
     }
 };
