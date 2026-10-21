@@ -138,6 +138,9 @@ private:
     void DecompressChunk() {
         if (!state_->dctx) throw std::runtime_error("Decompressor is closed");
 
+        // 空输入不应覆盖上一次解码结果
+        if (input_.empty()) return;
+
         ZSTD_inBuffer input = {input_.data(), input_.size(), 0};
         if (input.size > 0) state_->hasInput = true;
 
@@ -157,9 +160,9 @@ private:
 
     void FinishDecompress() {
         if (!state_->dctx) throw std::runtime_error("Decompressor is closed");
-        // if (!state_->hasInput || state_->lastRemaining != 0) {
-        //     throw std::runtime_error("Incomplete or empty Zstd frame");
-        // }
+        if (!state_->hasInput || state_->lastRemaining != 0) {
+            throw std::runtime_error("Incomplete or empty Zstd frame");
+        }
         // A successful decompression finish returns an empty Buffer.
     }
 };
