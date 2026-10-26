@@ -1,5 +1,5 @@
 const addon = require("../publishNode").require("fileTime.node");
-const fileTime = addon.fileTime as (file: string, ctime: number, mtime: number, atime: number) => void;
+const fileTime = addon.fileTime as (file: string, ctime: number, mtime?: number, atime?: number) => void;
 export default fileTime;
 // 测试用例
 // import * as fs from "fs";
