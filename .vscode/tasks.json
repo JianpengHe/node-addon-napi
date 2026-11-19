@@ -17,7 +17,14 @@
       "problemMatcher": [],
       "group": "build",
       "label": "构建node文件",
-      "detail": "pnpm run build",
+      "detail": "pnpm run build"
+    },
+    {
+      "type": "npm",
+      "script": "prepare",
+      "problemMatcher": [],
+      "label": "发布node文件到临时目录",
+      "detail": "pnpm run prepare"
     }
   ]
 }
